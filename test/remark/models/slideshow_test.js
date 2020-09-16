@@ -55,8 +55,8 @@ describe('Slideshow', function () {
 
   describe('loading from url', function () {
     it('should download source with \\n line separators from url', function () {
-      var xhr = slideshow.loadFromUrl('url');
-      xhr.success('a\n---\nb');
+      var xhrs = slideshow.loadFromUrls(['url']);
+      xhrs[0].success('a\n---\nb');
       var slides = slideshow.getSlides();
       slides.length.should.eql(2);
       slides[0].content.should.eql(['a']);
@@ -64,12 +64,52 @@ describe('Slideshow', function () {
     });
 
     it('should download source with \\r\\n line separators from url', function () {
-      var xhr = slideshow.loadFromUrl('url');
-      xhr.success('a\r\n---\r\nb');
+      var xhrs = slideshow.loadFromUrls(['url']);
+      xhrs[0].success('a\r\n---\r\nb');
       var slides = slideshow.getSlides();
       slides.length.should.eql(2);
       slides[0].content.should.eql(['a']);
       slides[1].content.should.eql(['b']);
+    });
+  });
+
+  describe('loading from urls', function () {
+    it('should download sources with \\n line separators from urls', function () {
+      var xhrs = slideshow.loadFromUrls(['url','url','url']);
+      xhrs[0].success('a');
+      xhrs[1].success('b\n---\nc');
+      xhrs[2].success('d');
+      var slides = slideshow.getSlides();
+      slides.length.should.eql(4);
+      slides[0].content.should.eql(['a']);
+      slides[1].content.should.eql(['b']);
+      slides[2].content.should.eql(['c']);
+      slides[3].content.should.eql(['d']);
+    });
+
+    it('should download sources with \\r\\n line separators from urls', function () {
+      var xhrs = slideshow.loadFromUrls(['url','url','url']);
+      xhrs[0].success('a');
+      xhrs[1].success('b\r\n---\r\nc');
+      xhrs[2].success('d');
+      var slides = slideshow.getSlides();
+      slides.length.should.eql(4);
+      slides[0].content.should.eql(['a']);
+      slides[1].content.should.eql(['b']);
+      slides[2].content.should.eql(['c']);
+      slides[3].content.should.eql(['d']);
+    });
+
+    it('should download sources with single slides from urls', function () {
+      var xhrs = slideshow.loadFromUrls(['url','url','url']);
+      xhrs[0].success('a');
+      xhrs[1].success('b');
+      xhrs[2].success('c');
+      var slides = slideshow.getSlides();
+      slides.length.should.eql(3);
+      slides[0].content.should.eql(['a']);
+      slides[1].content.should.eql(['b']);
+      slides[2].content.should.eql(['c']);
     });
   });
 
